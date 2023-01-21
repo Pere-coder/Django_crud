@@ -45,18 +45,18 @@
     <div class="form-group row">  
     <label class="col-sm-1 col-form-label"></label>  
     <div class="col-sm-4">  
-    <button onclick="myfunction() "type="submit" class="btn btn-primary">Submit</button>  
+    <button onclick="myfunction()" type="submit" class="btn btn-primary">Submit</button>  
     </div>  
   </div>  
     </div>  
     <script>
 
-        var myClass = document.getElementsByClassName("col-sm-2 col-form-label");
         {% comment %} myClass[0].style.color = 'yellow';
         myClass[1].style.color = 'red';
         myClass[2].style.color = 'green';
         myClass[3].style.color = 'purple'; {% endcomment %}
-
+        
+        var myClass = document.getElementsByClassName("col-sm-2 col-form-label");
 
         for (var i = 0; i < myClass.length; i++ ){
           myClass[0].style.color = 'yellow';

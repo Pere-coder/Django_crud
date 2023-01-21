@@ -10,8 +10,10 @@ from rest_framework.decorators import api_view
 from rest_framework import status
 from rest_framework.views import APIView
 from django.http import Http404
-from rest_framework import generics
+from rest_framework import generics, permissions
 from django.contrib.auth.models import User
+from .permissions import IsOwnerOrReadOnly
+from rest_framework.reverse import reverse
 
 # Create your views here.
 def emp(request):
@@ -21,7 +23,7 @@ def emp(request):
         if form.is_valid():
             try:
                 form.save()
-                return redirect('empList')
+                return redirect('empDetail')
             except:
                 pass
     else:
@@ -29,26 +31,82 @@ def emp(request):
     return render(request, 'index.html', {'form':form})
 
 
-class UserList(generics.ListCreateAPIView):
-    queryset = Employee.objects.all()
+class UserList(generics.ListAPIView):
+    queryset = User.objects.all()
     serializer_class = UserSerializer
-    
-    def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
     
 
-class UserDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Employee.objects.all()    
+class UserDetail(generics.RetrieveAPIView):
+    queryset = User.objects.all()    
     serializer_class = UserSerializer
+    
+    
 
 class employeeList(generics.ListCreateAPIView):
     queryset = Employee.objects.all()
     serializer_class = employeeSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
     
+    
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
 
 class employeeDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Employee.objects.all()    
     serializer_class = employeeSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+  
+  
+  
+@api_view(['GET'])
+def api_root(request, format=None):
+    return Response(
+        {
+            'users': reverse('user-list', request=request, format=format),
+            'employees': reverse('empList', request=request, format=format)
+        
+        }
+    )
+  
+  
+from rest_framework import renderers
+
+# class  EmployeeHighlight(generics.GenericAPIView):
+#     queryset = Employee.objects.all()
+#     renderer_classes = [renderers.StaticHTMLRenderer]
+    
+#     def get(self, request, *args, **kwargs):
+#         employee = self.get_object()
+#         return Response(employee.highlighted)
+    
+    
+
+    
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   
     
 # class employeeList(APIView):

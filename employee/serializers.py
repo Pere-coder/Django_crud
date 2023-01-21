@@ -23,20 +23,22 @@ from django.contrib.auth.models import User
 #         instance.save()
 #         return instance
 
-class employeeSerializer(serializers.ModelSerializer):
+
+
+class employeeSerializer(serializers.HyperlinkedModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
     class Meta:
         model = Employee
         fields = ['eid', 'ename', 'eemail', 'econtact', 'owner']
         
 
-class UserSerializer(serializers.ModelSerializer):
-    employees = serializers.PrimaryKeyRelatedField(many=True, queryset= Employee.objects.all())
-    
+
+class UserSerializer(serializers.HyperlinkedModelSerializer):
+    employees = serializers.PrimaryKeyRelatedField(many=True, queryset=Employee.objects.all())
+
     class Meta:
         model = User
-        fields = ['id', 'username', 'snippets']
-        
+        fields = ['id', 'username', 'employees']    
         
 
         
